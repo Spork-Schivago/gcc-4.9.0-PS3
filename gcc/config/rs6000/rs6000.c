@@ -1171,6 +1171,12 @@ static bool rs6000_secondary_reload_move (enum rs6000_reg_type,
 					  secondary_reload_info *,
 					  bool);
 
+#ifdef POWERPC_CELL64LV2
+
+static bool rs6000_cell64lv2_valid_pointer_mode(enum machine_mode);
+
+#endif
+
 /* Hash table stuff for keeping track of TOC entries.  */
 
 struct GTY(()) toc_hash_struct
@@ -32845,6 +32851,21 @@ emit_fusion_gpr_load (rtx *operands)
 }
 
 
+
+#ifdef POWERPC_CELL64LV2
+#undef TARGET_VALID_POINTER_MODE
+#define TARGET_VALID_POINTER_MODE rs6000_cell64lv2_valid_pointer_mode
+#endif
+
 struct gcc_target targetm = TARGET_INITIALIZER;
+
+#ifdef POWERPC_CELL64LV2
+
+static bool rs6000_cell64lv2_valid_pointer_mode(enum machine_mode mode)
+{
+	return (mode == SImode || (TARGET_64BIT && mode == DImode) || mode == ptr_mode || mode == Pmode);
+}
+
+#endif
 
 #include "gt-rs6000.h"
